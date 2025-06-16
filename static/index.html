@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Chatbot IA - Sistema de RRHH</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-section {
+            grid-column: 1 / -1;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .bot-message {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .confidence-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input, .input-group textarea {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .result-box {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            min-height: 100px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: border-color 0.3s;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: #007bff;
+        }
+
+        .file-upload.dragover {
+            border-color: #007bff;
+            background: #f8f9ff;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-robot"></i> Chatbot IA - Sistema de RRHH</h1>
+            <p>Sistema inteligente de consultas automatizadas para Recursos Humanos</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Sección del Chatbot -->
+            <div class="section chat-section">
+                <h2><i class="fas fa-comments"></i> Chatbot Inteligente</h2>
+                <div class="chat-container" id="chatContainer">
+                    <div class="message bot-message">
+                        ¡Hola! Soy tu asistente de RRHH. Puedo ayudarte con:
+                        <br>• Consultas sobre empleados
+                        <br>• Estadísticas de la empresa
+                        <br>• Predicciones de salarios
+                        <br>• Procesamiento de tarjetas de empleado
+                        <br><br>¿En qué puedo ayudarte?
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="chatInput" placeholder="Escribe tu pregunta aquí..." onkeypress="handleChatKeyPress(event)">
+                    <button class="btn btn-primary" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i> Enviar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sección de Predicción de Salarios -->
+            <div class="section">
+                <h2><i class="fas fa-chart-line"></i> Predicción de Salarios</h2>
+                <div class="form-group">
+                    <label for="edad">Edad:</label>
+                    <input type="number" id="edad" min="18" max="70" placeholder="Ej: 30">
+                </div>
+                <div class="form-group">
+                    <label for="experiencia">Años de Experiencia:</label>
+                    <input type="number" id="experiencia" min="0" max="50" placeholder="Ej: 5">
+                </div>
+                <div class="form-group">
+                    <label for="departamento">Departamento:</label>
+                    <select id="departamento">
+                        <option value="">Selecciona un departamento</option>
+                        <option value="Ventas">Ventas</option>
+                        <option value="IT">IT</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Finanzas">Finanzas</option>
+                        <option value="Recursos Humanos">Recursos Humanos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="educacion">Nivel de Educación:</label>
+                    <select id="educacion">
+                        <option value="">Selecciona nivel educativo</option>
+                        <option value="Técnico">Técnico</option>
+                        <option value="Licenciatura">Licenciatura</option>
+                        <option value="Maestría">Maestría</option>
+                        <option value="Doctorado">Doctorado</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="predictSalary()">
+                    <i class="fas fa-calculator"></i> Predecir Salario
+                </button>
+                <div id="salaryResult" class="result-box" style="display: none;"></div>
+            </div>
+
+            <!-- Sección de Procesamiento OCR -->
+            <div class="section">
+                <h2><i class="fas fa-camera"></i> Procesamiento de Tarjetas</h2>
+                <div class="file-upload" id="fileUpload" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3em; color: #6c757d; margin-bottom: 15px;"></i>
+                    <p><strong>Haz clic aquí</strong> o arrastra una imagen de tarjeta de empleado</p>
+                    <p style="font-size: 0.9em; color: #6c757d;">Formatos soportados: JPG, PNG, GIF</p>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                <div id="imagePreview"></div>
+                <button class="btn btn-warning" onclick="processImage()" id="processBtn" style="display: none; margin-top: 15px;">
+                    <i class="fas fa-magic"></i> Procesar Imagen
+                </button>
+                <div id="ocrResult" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let selectedFile = null;
+
+        // Función para enviar mensaje al chatbot
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Agregar mensaje del usuario
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Mostrar loading
+            const loadingId = addLoadingMessage();
+
+            try {
+                const response = await fetch(`${API_BASE}/chatbot`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ pregunta: message })
+                });
+
+                const data = await response.json();
+                
+                // Remover loading
+                removeMessage(loadingId);
+
+                if (response.ok) {
+                    addMessage(data.respuesta, 'bot', data.confianza, data.categoria);
+                } else {
+                    addMessage('Error: ' + data.detail, 'bot');
+                }
+            } catch (error) {
+                removeMessage(loadingId);
+                addMessage('Error de conexión. Asegúrate de que el servidor esté ejecutándose.', 'bot');
+            }
+        }
+
+        // Función para predecir salario
+        async function predictSalary() {
+            const edad = document.getElementById('edad').value;
+            const experiencia = document.getElementById('experiencia').value;
+            const departamento = document.getElementById('departamento').value;
+            const educacion = document.getElementById('educacion').value;
+
+            if (!edad || !experiencia || !departamento || !educacion) {
+                showResult('salaryResult', 'Por favor, completa todos los campos.', 'error');
+                return;
+            }
+
+            const resultDiv = document.getElementById('salaryResult');
+            resultDiv.innerHTML = '<div class="loading">Calculando predicción...</div>';
+            resultDiv.style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/predict-salario`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        edad: parseInt(edad),
+                        experiencia_anos: parseInt(experiencia),
+                        departamento: departamento,
+                        nivel_educacion: educacion
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const html = `
+                        <div class="success">
+                            <h3><i class="fas fa-dollar-sign"></i> Predicción de Salario</h3>
+                            <p><strong>Salario Predicho:</strong> $${data.salario_predicho.toLocaleString()}</p>
+                            <p><strong>Confianza:</strong> ${(data.confianza * 100).toFixed(1)}%</p>
+                            <hr>
+                            <h4>Datos Utilizados:</h4>
+                            <ul>
+                                <li>Edad: ${data.features_usadas.edad} años</li>
+                                <li>Experiencia: ${data.features_usadas.experiencia_anos} años</li>
+                                <li>Departamento: ${data.features_usadas.departamento}</li>
+                                <li>Educación: ${data.features_usadas.nivel_educacion}</li>
+                            </ul>
+                        </div>
+                    `;
+                    resultDiv.innerHTML = html;
+                } else {
+                    showResult('salaryResult', 'Error: ' + data.detail, 'error');
+                }
+            } catch (error) {
+                showResult('salaryResult', 'Error de conexión. Asegúrate de que el servidor esté ejecutándose.', 'error');
+            }
+        }
+
+        // Función para manejar selección de archivo
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                displayImagePreview(file);
+                document.getElementById('processBtn').style.display = 'block';
+            }
+        }
+
+        // Función para mostrar preview de imagen
+        function displayImagePreview(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Función para procesar imagen OCR
+        async function processImage() {
+            if (!selectedFile) return;
+
+            const resultDiv = document.getElementById('ocrResult');
+            resultDiv.innerHTML = '<div class="loading">Procesando imagen...</div>';
+            resultDiv.style.display = 'block';
+
+            try {
+                // Convertir imagen a base64
+                const base64 = await fileToBase64(selectedFile);
+
+                const response = await fetch(`${API_BASE}/upload-tarjeta`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imagen: base64 })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    let html = '<div class="success">';
+                    html += '<h3><i class="fas fa-check-circle"></i> Datos Extraídos</h3>';
+                    
+                    if (data.datos_extraidos && Object.keys(data.datos_extraidos).length > 0) {
+                        html += '<ul>';
+                        for (const [key, value] of Object.entries(data.datos_extraidos)) {
+                            html += `<li><strong>${key}:</strong> ${value}</li>`;
+                        }
+                        html += '</ul>';
+                    }
+
+                    if (data.validacion && data.validacion.empleado_encontrado) {
+                        html += '<hr><h4><i class="fas fa-user-check"></i> Empleado Encontrado en BD</h4>';
+                        html += `<p><strong>ID:</strong> ${data.validacion.empleado_encontrado.id}</p>`;
+                        html += `<p><strong>Nombre:</strong> ${data.validacion.empleado_encontrado.nombre}</p>`;
+                        html += `<p><strong>Departamento:</strong> ${data.validacion.empleado_encontrado.departamento}</p>`;
+                    }
+
+                    html += '</div>';
+                    resultDiv.innerHTML = html;
+                } else {
+                    showResult('ocrResult', 'Error al procesar la imagen: ' + (data.error || 'Error desconocido'), 'error');
+                }
+            } catch (error) {
+                showResult('ocrResult', 'Error de conexión. Asegúrate de que el servidor esté ejecutándose.', 'error');
+            }
+        }
+
+        // Función auxiliar para convertir archivo a base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Función para agregar mensaje al chat
+        function addMessage(text, sender, confidence = null, category = null) {
+            const container = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            let html = text;
+            if (confidence && category) {
+                html += `<br><span class="confidence-badge">Confianza: ${(confidence * 100).toFixed(1)}% | Categoría: ${category}</span>`;
+            }
+            
+            messageDiv.innerHTML = html;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Función para agregar mensaje de loading
+        function addLoadingMessage() {
+            const container = document.getElementById('chatContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message bot-message';
+            loadingDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Procesando...</div>';
+            loadingDiv.id = 'loading-' + Date.now();
+            container.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+            return loadingDiv.id;
+        }
+
+        // Función para remover mensaje
+        function removeMessage(messageId) {
+            const message = document.getElementById(messageId);
+            if (message) {
+                message.remove();
+            }
+        }
+
+        // Función para mostrar resultado
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${type}">${message}</div>`;
+            element.style.display = 'block';
+        }
+
+        // Función para manejar tecla Enter en el chat
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Configurar drag and drop para archivos
+        const fileUpload = document.getElementById('fileUpload');
+        
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                displayImagePreview(files[0]);
+                document.getElementById('processBtn').style.display = 'block';
+            }
+        });
+
+        // Mensaje inicial
+        console.log('🤖 Chatbot IA - Frontend cargado correctamente');
+        console.log('📡 Conectando con API en:', API_BASE);
+    </script>
+</body>
+</html> 
