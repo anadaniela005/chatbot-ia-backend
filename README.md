@@ -437,12 +437,12 @@ proyecto/
 
 ### URL del Deployment
 ```
-https://tu-app-nombre.onrender.com
+https://chatbot-ia-backend-3461.onrender.com
 ```
 
 ### Documentación Automática
 ```
-https://tu-app-nombre.onrender.com/docs
+https://chatbot-ia-backend-3461.onrender.com/docs
 ```
 
 ## 📝 Reflexión Técnica
